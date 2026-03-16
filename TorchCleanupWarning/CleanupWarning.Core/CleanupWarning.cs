@@ -196,7 +196,7 @@ namespace CleanupWarning.Core
                     ShowOnHud = true,
                 };
 
-                gpsCollection.SendAddGps(playerId, ref gps, entityId);
+                gpsCollection.SendAddGpsRequest(playerId, ref gps, entityId);
             }
 
             SendMessage(steamId, default, "Added GPS of unnamed grids in your HUD!");
