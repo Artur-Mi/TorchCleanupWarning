@@ -44,8 +44,13 @@ namespace CleanupWarning
             var messageBuilder = new StringBuilder();
             messageBuilder.AppendLine();
             messageBuilder.AppendLine($"> !{Consts.CommandBase} {Consts.Show}");
+            messageBuilder.AppendLine("Exibe a localização das Grids afetadas");
+            messageBuilder.AppendLine();
             messageBuilder.AppendLine($"> !{Consts.CommandBase} {Consts.AutoName}");
+            messageBuilder.AppendLine("Renomeia automaticamente as grids afetadas");
+            messageBuilder.AppendLine();
             messageBuilder.AppendLine($"> !{Consts.CommandBase} {Consts.Delete}");
+            messageBuilder.AppendLine("Deleta todas as grids sem nome (cuidado...)");
 
             Context.Respond(messageBuilder.ToString());
         }

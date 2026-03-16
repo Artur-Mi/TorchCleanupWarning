@@ -73,10 +73,11 @@ namespace CleanupWarning.Core
             Log.Trace($"{userId} {string.Join(", ", groupNames)}");
 
             messageBuilder.AppendLine();
-            messageBuilder.AppendLine("NAME YOUR GRIDS ASAP!");
+            messageBuilder.AppendLine("RENOMEIE SUAS GRIDS JÁ!");
             messageBuilder.AppendLine($"{string.Join("\n", groupNames.Select(g => $"> '{g}'"))}");
             messageBuilder.AppendLine();
             messageBuilder.AppendLine($"> !{CleanupWarningCommandModule.Consts.CommandBase} {CleanupWarningCommandModule.Consts.Help}");
+            messageBuilder.AppendLine("Use o comando acima para saber como proceder");
 
             SendMessage(steamId, Color.Red, messageBuilder.ToString());
         }
@@ -104,13 +105,19 @@ namespace CleanupWarning.Core
             var steamId = player.Id.SteamId;
 
             var faction = MySession.Static.Factions.TryGetPlayerFaction(playerId);
-            if (faction == null)
+
+            string factionTag;
+
+            if (faction != null)
             {
-                SendMessage(steamId, Color.Red, "Join or make a faction first!");
-                return;
+                factionTag = $"[{faction.Tag}]" + " ";
             }
 
-            var factionTag = faction.Tag;
+            else
+            {
+                factionTag = "";
+            }
+
             var playerName = player.DisplayName;
 
             var renames = new List<(string OriginalName, string NewName)>();
@@ -120,7 +127,7 @@ namespace CleanupWarning.Core
             Parallel.ForEach(groups, async group =>
             {
                 var newBaseName = await GenerateName();
-                var newName = $"{factionTag} {playerName} {newBaseName}";
+                var newName = $"{factionTag}{playerName} {newBaseName}";
 
                 var topGrid = group.Grids.First();
                 if (topGrid.Closed) return; // deleted already
@@ -133,7 +140,7 @@ namespace CleanupWarning.Core
                 Log.Trace($"renamed '{originalName}' -> '{newName}");
             });
 
-            messageBuilder.AppendLine("Renamed your unnamed grids!");
+            messageBuilder.AppendLine("Grids renomeadas com sucesso!");
             foreach (var (originalName, newName) in renames)
             {
                 messageBuilder.AppendLine($"| '{originalName}' -> '{newName}'");
@@ -162,7 +169,7 @@ namespace CleanupWarning.Core
 
             var messageBuilder = new StringBuilder();
             messageBuilder.AppendLine();
-            messageBuilder.AppendLine("Deleted your unnamed grids!");
+            messageBuilder.AppendLine("Grids (sem nome) deletadas com sucesso!");
 
             foreach (var groupName in groupNames)
             {
@@ -190,7 +197,7 @@ namespace CleanupWarning.Core
                 var gps = new MyGps
                 {
                     Coords = position,
-                    Description = "Unnamed grid can be automatically cleaned up anytime!",
+                    Description = "Grids sem nome podem ser deletadas pela limpeza do servidor!",
                     DisplayName = name,
                     Name = name,
                     ShowOnHud = true,
@@ -199,7 +206,7 @@ namespace CleanupWarning.Core
                 gpsCollection.SendAddGpsRequest(playerId, ref gps, entityId);
             }
 
-            SendMessage(steamId, default, "Added GPS of unnamed grids in your HUD!");
+            SendMessage(steamId, default, "Os GPS das grids sem nome foram adicionados no HUD!");
         }
 
         static Task<string> GenerateName()
